@@ -20,6 +20,7 @@ aws elb create-load-balancer --load-balancer-name $elb_name \
     --listeners $elb_listeners \
     --availability-zones $availability_zones
 
+echo modify-load-balancer-attributes
 aws elb modify-load-balancer-attributes \
     --load-balancer-name $elb_name \
     --load-balancer-attributes "{\"ConnectionDraining\":{\"Enabled\":true,\"Timeout\":300}}"
@@ -63,7 +64,7 @@ aws cloudwatch put-metric-alarm \
     --namespace "AWS/EC2" \
     --period 300 \
     --statistic Average \
-    --threshold 50 \
+    --threshold 30 \
     --alarm-actions $arn \
     --dimensions "Name=AutoScalingGroupName,Value=$as_group_name"
 
@@ -79,12 +80,12 @@ arn=$(aws autoscaling put-scaling-policy \
 echo put-metric-alarm $high_cpu_alarm_name with arn $arn
 aws cloudwatch put-metric-alarm \
     --alarm-name $high_cpu_alarm_name \
-    --comparison-operator LessThanThreshold \
+    --comparison-operator GreaterThanThreshold \
     --evaluation-periods  1 \
     --metric-name CPUUtilization \
     --namespace "AWS/EC2" \
     --period 300 \
     --statistic Average \
-    --threshold 80 \
+    --threshold 70 \
     --alarm-actions $arn \
     --dimensions "Name=AutoScalingGroupName,Value=$as_group_name"
