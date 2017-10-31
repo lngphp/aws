@@ -3,14 +3,34 @@
 
 . ./confrc
 
+# echo create-security-group
+# aws ec2 create-security-group \
+#     --group-name $security_group_name \
+#     --description $security_group_name
+
+# echo authorize-security-group-ingress
+# aws ec2 authorize-security-group-ingress \
+#     --group-name $security_group_name \
+#     --protocol tcp \
+#     --port 22
+#     # --cidr 203.0.113.0/24
+
 echo create-load-balancer
 aws elb create-load-balancer --load-balancer-name $elb_name \
     --listeners $elb_listeners \
     --availability-zones $availability_zones
 
+aws elb modify-load-balancer-attributes \
+    --load-balancer-name $elb_name \
+    --load-balancer-attributes "{\"ConnectionDraining\":{\"Enabled\":true,\"Timeout\":300}}"
+
 echo create-launch-configuration
-aws autoscaling create-launch-configuration --launch-configuration-name $launch_conf_name \
-    --image-id $image_id --instance-type $instance_type
+aws autoscaling create-launch-configuration \
+    --launch-configuration-name $launch_conf_name \
+    --image-id $image_id \
+    --instance-type $instance_type \
+    --key-name $key_name \
+    --security-groups $security_group_ids
 
 echo create-auto-scaling-group
 aws autoscaling create-auto-scaling-group --auto-scaling-group-name $as_group_name \
@@ -25,13 +45,6 @@ aws autoscaling create-auto-scaling-group --auto-scaling-group-name $as_group_na
     --tags $tags
 
 # AS Triggers
-arn=$(aws autoscaling put-scaling-policy \
-    --policy-name $scale_in_policy \
-    --auto-scaling-group-name $as_group_name \
-    --scaling-adjustment=2 \
-    --adjustment-type ChangeInCapacity \
-    --cooldown 60)
-
 echo 'put-scaling-policy in'
 arn=$(aws autoscaling put-scaling-policy \
     --output text \
@@ -41,7 +54,7 @@ arn=$(aws autoscaling put-scaling-policy \
     --adjustment-type ChangeInCapacity \
     --cooldown $cooldown)
 
-echo put-metric-alarm $low_cpu_alarm_name
+echo put-metric-alarm $low_cpu_alarm_name with arn $arn
 aws cloudwatch put-metric-alarm \
     --alarm-name $low_cpu_alarm_name \
     --comparison-operator LessThanThreshold \
@@ -63,7 +76,7 @@ arn=$(aws autoscaling put-scaling-policy \
     --adjustment-type ChangeInCapacity \
     --cooldown $cooldown)
 
-echo put-metric-alarm
+echo put-metric-alarm $high_cpu_alarm_name with arn $arn
 aws cloudwatch put-metric-alarm \
     --alarm-name $high_cpu_alarm_name \
     --comparison-operator LessThanThreshold \

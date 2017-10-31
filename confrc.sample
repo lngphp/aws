@@ -2,7 +2,7 @@ project_name='SomeProject'
 launch_conf_name="${project_name}LaunchConf"
 instance_type='t2.micro'
 image_id='ami-1234567'
-as_group_name="${project_name}AsGroupName"
+as_group_name="${project_name}AsGroup"
 elb_name="${project_name}LoadBalancer"
 elb_listeners='Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80'
 availability_zones='us-east-2a us-east-2b'
@@ -11,6 +11,7 @@ min_size=0
 desired_capacity=0
 key_name="${project_name}KeyPair"
 security_group_ids=''
+security_group_name=''
 health_check_type='ELB'
 health_check_grace_period=300
 tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=environment,Value=test,PropagateAtLaunch=true"
@@ -19,3 +20,4 @@ scale_out_policy='scaleOut'
 cooldown=60
 low_cpu_alarm_name='low_cpu_alarm'
 high_cpu_alarm_name='high_cpu_alarm'
+
