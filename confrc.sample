@@ -20,4 +20,4 @@ scale_out_policy='scaleOut'
 cooldown=60
 low_cpu_alarm_name='low_cpu_alarm'
 high_cpu_alarm_name='high_cpu_alarm'
-
+iam_instance_profile='CloudWatchLogs'

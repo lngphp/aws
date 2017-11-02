@@ -3,18 +3,6 @@
 
 . ./confrc
 
-# echo create-security-group
-# aws ec2 create-security-group \
-#     --group-name $security_group_name \
-#     --description $security_group_name
-
-# echo authorize-security-group-ingress
-# aws ec2 authorize-security-group-ingress \
-#     --group-name $security_group_name \
-#     --protocol tcp \
-#     --port 22
-#     # --cidr 203.0.113.0/24
-
 echo create-load-balancer
 aws elb create-load-balancer --load-balancer-name $elb_name \
     --listeners $elb_listeners \
@@ -31,7 +19,8 @@ aws autoscaling create-launch-configuration \
     --image-id $image_id \
     --instance-type $instance_type \
     --key-name $key_name \
-    --security-groups $security_group_ids
+    --security-groups $security_group_ids \
+    --iam-instance-profile $iam_instance_profile
 
 echo create-auto-scaling-group
 aws autoscaling create-auto-scaling-group --auto-scaling-group-name $as_group_name \
@@ -66,7 +55,8 @@ aws cloudwatch put-metric-alarm \
     --statistic Average \
     --threshold 30 \
     --alarm-actions $arn \
-    --dimensions "Name=AutoScalingGroupName,Value=$as_group_name"
+    --dimensions "Name=AutoScalingGroupName,Value=$as_group_name" \
+    --unit Percent
 
 echo put-scaling-policy out
 arn=$(aws autoscaling put-scaling-policy \
@@ -88,4 +78,5 @@ aws cloudwatch put-metric-alarm \
     --statistic Average \
     --threshold 70 \
     --alarm-actions $arn \
-    --dimensions "Name=AutoScalingGroupName,Value=$as_group_name"
+    --dimensions "Name=AutoScalingGroupName,Value=$as_group_name" \
+    --unit Percent
