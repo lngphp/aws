@@ -1,23 +1,25 @@
-project_name='SomeProject'
-launch_conf_name="${project_name}LaunchConf"
+project='mdiSite'
+env='Dev'
+launch_conf_name="${project}LaunchConf${env}"
 instance_type='t2.micro'
 image_id='ami-1234567'
-as_group_name="${project_name}AsGroup"
-elb_name="${project_name}LoadBalancer"
-elb_listeners='Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80'
+as_group_name="${project}AsGroup${env}"
+elb_name="${project}LoadBalancer${env}"
+ssl_cert_id='arn:aws:acm:us-east-1:114614344725:certificate/7a9c35f3-b562-40b1-ba0b-14f0932c41f3'
+elb_listeners="Protocol=HTTP,LoadBalancerPort=80,InstanceProtocol=HTTP,InstancePort=80 Protocol=HTTPS,LoadBalancerPort=443,InstanceProtocol=HTTP,InstancePort=80,SSLCertificateId=$ssl_cert_id"
 availability_zones='us-east-2a us-east-2b'
 max_size=1
 min_size=0
 desired_capacity=0
-key_name="${project_name}KeyPair"
+key_name="${project}KeyPair${env}"
 security_group_ids=''
 security_group_name=''
 health_check_type='ELB'
 health_check_grace_period=300
-tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=environment,Value=test,PropagateAtLaunch=true"
+tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=environment,Value=${env},PropagateAtLaunch=true"
 scale_in_policy='scaleIn'
 scale_out_policy='scaleOut'
-cooldown=60
+cooldown=90
 low_cpu_alarm_name='low_cpu_alarm'
 high_cpu_alarm_name='high_cpu_alarm'
 iam_instance_profile='CloudWatchLogs'
