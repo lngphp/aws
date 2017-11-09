@@ -88,3 +88,13 @@ echo 'autoscaling enable-metrics-collection'
 aws autoscaling enable-metrics-collection \
     --auto-scaling-group-name $as_group_name \
     --granularity "1Minute"
+
+echo 'autoscaling put-notification-configuration'
+aws autoscaling put-notification-configuration \
+    --auto-scaling-group-name $as_group_name \
+    --topic-arn $notifications_arn \
+    --notification-types \
+        "autoscaling:EC2_INSTANCE_LAUNCH" \
+        "autoscaling:EC2_INSTANCE_TERMINATE" \
+        "autoscaling:EC2_INSTANCE_LAUNCH_ERROR" \
+        "autoscaling:EC2_INSTANCE_TERMINATE_ERROR"
