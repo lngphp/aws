@@ -3,8 +3,9 @@
 
 . ./confrc
 
-echo create-load-balancer
-aws elb create-load-balancer --load-balancer-name $elb_name \
+echo create-load-balancer $elb_name
+aws elb create-load-balancer \
+    --load-balancer-name $elb_name \
     --listeners $elb_listeners \
     --availability-zones $availability_zones
 
@@ -23,7 +24,8 @@ aws autoscaling create-launch-configuration \
     --iam-instance-profile $iam_instance_profile
 
 echo create-auto-scaling-group
-aws autoscaling create-auto-scaling-group --auto-scaling-group-name $as_group_name \
+aws autoscaling create-auto-scaling-group \
+    --auto-scaling-group-name $as_group_name \
     --launch-configuration-name $launch_conf_name \
     --availability-zones $availability_zones \
     --load-balancer-names $elb_name \

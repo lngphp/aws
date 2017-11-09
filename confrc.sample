@@ -16,7 +16,7 @@ security_group_ids=''
 security_group_name=''
 health_check_type='ELB'
 health_check_grace_period=300
-tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=environment,Value=${env},PropagateAtLaunch=true"
+tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=Environment,Value=${env},PropagateAtLaunch=true"
 scale_in_policy='scaleIn'
 scale_out_policy='scaleOut'
 cooldown=90
