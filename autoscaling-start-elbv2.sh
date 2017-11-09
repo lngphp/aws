@@ -3,12 +3,15 @@
 
 . ./confrc
 
-echo create-load-balancer $elb_name
-aws elb create-load-balancer \
-    --load-balancer-name $elb_name \
-    --listeners $elb_listeners \
-    --availability-zones $availability_zones \
-    --security-groups $elb_security_group_ids
+aws elbv2 create-load-balancer \
+    --name elbv2-test \
+    --type network \
+    --scheme internet-facing \
+    --subnets subnet-087fad50 subnet-14b70c62 \
+    # --security-groups sg-f873618a
+
+
+exit
 
 echo modify-load-balancer-attributes
 aws elb modify-load-balancer-attributes \
@@ -21,7 +24,7 @@ aws autoscaling create-launch-configuration \
     --image-id $image_id \
     --instance-type $instance_type \
     --key-name $key_name \
-    --security-groups $instance_security_group_ids \
+    --security-groups $security_group_ids \
     --iam-instance-profile $iam_instance_profile
 
 echo create-auto-scaling-group
@@ -83,8 +86,3 @@ aws cloudwatch put-metric-alarm \
     --alarm-actions $arn \
     --dimensions "Name=AutoScalingGroupName,Value=$as_group_name" \
     --unit Percent
-
-echo 'autoscaling enable-metrics-collection'
-aws autoscaling enable-metrics-collection \
-    --auto-scaling-group-name $as_group_name \
-    --granularity "1Minute"

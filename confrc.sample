@@ -13,7 +13,7 @@ min_size=0
 desired_capacity=0
 key_name="${project}KeyPair${env}"
 security_group_ids=''
-security_group_name=''
+elb_security_group_ids=''
 health_check_type='ELB'
 health_check_grace_period=300
 tags="ResourceId=$as_group_name,ResourceType=auto-scaling-group,Key=Environment,Value=${env},PropagateAtLaunch=true"
